@@ -1,3 +1,7 @@
+(https://open.appacademy.io/learn/full-stack-online/ruby/tic-tac-toe-ai)
+
+# Project Description:
+
 # Tic-tac-toe AI
 We're going to write a computer AI that can't be beaten at TicTacToe.
 
