@@ -6,65 +6,61 @@ class TicTacToeNode
   def initialize(board, next_mover_mark, prev_move_pos = nil)
     @board, @next_mover_mark, @prev_move_pos = board, next_mover_mark, prev_move_pos
   end
-
+  
   def losing_node?(evaluator)
-    if board.over?
-      if board.winner == next_mover_mark
-        return true
-      elsif board.winner == nil || board.winner == self.get_my_mark
-        return false
-      end
+    if self.board.over?
+      return self.board.won? && self.board.winner != evaluator        
     end
 
-    if next_mover_mark == evaluator
-      self.children.all? { |child| self.losing_node?(evaluator) }
+    if self.next_mover_mark == evaluator
+      self.children.all? { |child| child.losing_node?(evaluator) }
     else
-      self.children.any? { |child| self.losing_node?(evaluator) }
+      self.children.any? { |child| child.losing_node?(evaluator) }
     end
   end
 
   def winning_node?(evaluator)
-    if board.over?
-      if board.winner == self.get_my_mark
-        return true
-      elsif board.winner == nil || board.winner == next_mover_mark
-        return false
-      end
+    if self.board.over?
+      return self.board.winner == evaluator        
     end
 
-    if next_mover_mark == evaluator
-      self.children.any? { |child| self.winning_node?(evaluator) }
+    if self.next_mover_mark == evaluator
+      self.children.any? { |child| child.winning_node?(evaluator) }
     else
-      self.children.all? { |child| self.winning_node?(evaluator) }
+      self.children.all? { |child| child.winning_node?(evaluator) }
     end
   end
 
   # This method generates an array of all moves that can be made after
   # the current move.
+  
+  # from solution:
   def children
-    children_nodes = []
+    children = []
 
-    @board.rows.each_with_index do |row, idx_r|
-      row.each_with_index do |col, idx_c|
-        if col.nil?
-          new_node = TicTacToeNode.new(@board.dup, @next_mover_mark, prev_move_pos = [idx_r, idx_c])
-          new_node.board.rows[idx_r][idx_c] = @next_mover_mark
-          self.alternate_mark
-          children_nodes << new_node
-        end
+    (0..2).each do |row_idx|
+      (0..2).each do |col_idx|
+        pos = [row_idx, col_idx]
+
+        # Can't move here if it's not free
+        next unless board.empty?(pos)
+
+        new_board = board.dup
+        new_board[pos] = self.next_mover_mark
+        next_mover_mark = (self.next_mover_mark == :x ? :o : :x)
+
+        children << TicTacToeNode.new(new_board, next_mover_mark, pos)
       end
     end
 
-    children_nodes
+    children  
   end
 
   def alternate_mark
-    @next_mover_mark = :x if @next_mover_mark == :o
-    @next_mover_mark = :o if @next_mover_mark == :x
-  end
-
-  def get_my_mark
-    return :x if @next_mover_mark == :o
-    return :o if @next_mover_mark == :x 
-  end
+    if @next_mover_mark == :o
+      @next_mover_mark = :x 
+    else 
+      @next_mover_mark = :o
+    end
+  end  
 end
