@@ -1,3 +1,5 @@
+(Solutions to all AAO projects are usually given).
+
 (https://open.appacademy.io/learn/full-stack-online/ruby/tic-tac-toe-ai)
 
 # Project Description:
